@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NestForge – Free auto nesting for laser & plasma</title>
+<meta name="description" content="True-shape auto nesting in your browser. Upload DXF or SVG, export DXF, SVG and G-code.">
+<style>
+:root{color-scheme:light;--bg:#f4f6fa;--p:#fff;--p2:#eef2f7;--b:#d8dfe9;--t:#101826;--m:#5b6a7d;--a:#f26a0f;--a2:#0a9e88;--pt:#fff;--cv:#f7f9fc;--hbg:#ffffffe6}
+[data-theme=dark]{color-scheme:dark;--bg:#0b0f14;--p:#131a22;--p2:#1a232e;--b:#25313f;--t:#e8eef5;--m:#8a9bb0;--a:#ff7a1a;--a2:#2de2c8;--pt:#1a0d00;--cv:#0e141b;--hbg:#0b0f14e6}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--t);font:15px/1.55 system-ui,Segoe UI,Roboto,sans-serif}
+a{color:inherit;text-decoration:none}[hidden]{display:none!important}
+header{position:sticky;top:0;z-index:9;display:flex;align-items:center;justify-content:space-between;padding:12px 5vw;background:var(--hbg);backdrop-filter:blur(10px);border-bottom:1px solid var(--b)}
+.logo{font-weight:800;font-size:19px;letter-spacing:.3px}.logo b{color:var(--a)}
+nav{display:flex;gap:6px;align-items:center}nav a{padding:7px 14px;border-radius:8px;color:var(--m)}nav a:hover,nav a.on{color:var(--t);background:var(--p2)}
+.btn{display:inline-block;border:1px solid var(--b);background:var(--p2);color:var(--t);padding:9px 16px;border-radius:9px;font:600 14px inherit;cursor:pointer}
+.btn:hover{border-color:var(--a)}.btn.pri{background:var(--a);border-color:var(--a);color:var(--pt)}.btn.pri:hover{filter:brightness(1.1)}.btn:disabled{opacity:.5;cursor:wait}
+.wrap{max-width:1150px;margin:auto;padding:0 5vw}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;padding:70px 0 50px}
+h1{font-size:clamp(34px,5vw,58px);line-height:1.08;letter-spacing:-1px}h1 span{background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--m);font-size:18px;margin:18px 0 26px;max-width:520px}.hero .btn{margin-right:8px}
+.tag{display:inline-block;font-size:12px;color:var(--a2);border:1px solid #2de2c855;padding:3px 10px;border-radius:99px;margin-bottom:16px}
+.vis{background:var(--p);border:1px solid var(--b);border-radius:16px;padding:14px}
+.stats{display:flex;gap:30px;flex-wrap:wrap;padding:24px 0;border-block:1px solid var(--b);margin-bottom:60px}.stats div{font-size:13px;color:var(--m)}.stats b{display:block;font-size:26px;color:var(--t)}
+h2{font-size:30px;margin-bottom:8px}.sub{color:var(--m);margin-bottom:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:60px}
+.card{background:var(--p);border:1px solid var(--b);border-radius:14px;padding:20px}.card h3{font-size:16px;margin:8px 0 4px}.card p{color:var(--m);font-size:14px}.ic{font-size:24px}
+.steps .card b{color:var(--a);font-size:28px}
+.cta{text-align:center;background:linear-gradient(135deg,#ff7a1a22,#2de2c81a);border:1px solid var(--b);border-radius:18px;padding:44px 20px;margin-bottom:60px}
+footer{border-top:1px solid var(--b);color:var(--m);font-size:13px;text-align:center;padding:26px}
+.app{display:grid;grid-template-columns:350px 1fr;gap:16px;padding:20px 3vw;align-items:start}
+.pan{background:var(--p);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:14px}.pan h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--m);margin-bottom:10px}
+.drop{border:2px dashed var(--b);border-radius:12px;padding:22px;text-align:center;color:var(--m);cursor:pointer}.drop.on,.drop:hover{border-color:var(--a);color:var(--t)}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:10px}.f label{font-size:12px;color:var(--m);display:block}
+input,select{width:100%;background:var(--bg);border:1px solid var(--b);color:var(--t);border-radius:8px;padding:7px 9px;font:inherit}input:focus,select:focus{outline:none;border-color:var(--a)}
+.row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--b);font-size:13px}.row:last-child{border:0}.sw{width:12px;height:12px;border-radius:3px;flex:none}.row .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.row small{color:var(--m)}.row input{width:54px;padding:4px 6px}.x{background:none;border:0;color:var(--m);cursor:pointer;font-size:18px}.x:hover{color:#ff5a5a}
+.acts{display:flex;gap:8px;flex-wrap:wrap}.acts .btn{flex:1;white-space:nowrap}
+.view{background:var(--p);border:1px solid var(--b);border-radius:14px;padding:12px;position:sticky;top:64px}
+canvas{display:block;border-radius:8px;max-width:100%}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button{background:var(--p2);border:1px solid var(--b);color:var(--m);padding:5px 12px;border-radius:7px;cursor:pointer}.tabs button.on{color:var(--t);border-color:var(--a)}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:10px}.kpi div{background:var(--p2);border-radius:9px;padding:8px 10px;font-size:12px;color:var(--m)}.kpi b{display:block;color:var(--t);font-size:19px}.kpi .u b{color:var(--a2)}
+#msg{color:var(--m);font-size:13px;min-height:20px;margin-top:8px}
+.pj{padding:36px 5vw;max-width:1200px;margin:auto}.pj .top{display:flex;justify-content:space-between;align-items:end;margin-bottom:24px;gap:10px;flex-wrap:wrap}
+.pc img{width:100%;border-radius:8px;background:var(--bg);aspect-ratio:16/10;object-fit:contain;margin-bottom:10px}.pc .acts{margin-top:12px}
+.empty{color:var(--m);text-align:center;padding:60px 0;border:1px dashed var(--b);border-radius:14px}
+@media(max-width:900px){.hero,.app{grid-template-columns:1fr}.view{position:static}nav a{padding:7px 9px}}
+.topbar{position:sticky;top:58px;z-index:8;background:var(--hbg);backdrop-filter:blur(10px);border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 4vw}
+.stepper{display:flex;gap:6px}.stp{border:1px solid var(--b);background:var(--p);color:var(--m);padding:7px 14px;border-radius:99px;cursor:pointer;font:600 13px inherit}.stp.on{background:var(--a);border-color:var(--a);color:var(--pt)}.stp.done{color:var(--t);border-color:var(--a2)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:var(--p);border:1px solid var(--b);border-radius:11px;padding:4px 14px;font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:.6px}.chip b{display:block;font-size:20px;color:var(--t);letter-spacing:0}.chip.hi b{color:var(--a)}
+.wiz{max-width:1100px;margin:auto;padding:26px 4vw 50px}.wiz h2{font-size:24px}
+.pgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:14px}
+.pcard{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:10px;font-size:13px}.pcard canvas{width:100%;aspect-ratio:240/130;background:var(--p2);border-radius:8px}.pcard .nm{font-weight:600;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mr{display:flex;gap:6px;align-items:center;margin-top:6px;color:var(--m);cursor:pointer}.mr input{width:auto}.pcard small{color:var(--m)}.qr{display:flex;align-items:center;gap:8px;margin-top:6px}.qr label{color:var(--m)}.qr input{width:70px}.qr .x{margin-left:auto}
+.nav{display:flex;justify-content:space-between;margin-top:22px;gap:10px}.sum{color:var(--m);font-size:13px;margin:6px 0 14px}#th{padding:7px 11px}
+</style></head><body>
+<header><a class="logo" href="#home">Nest<b>Forge</b></a>
+<nav><a href="#home">Home</a><a href="#nest">Nester</a><a href="#projects">Projects</a><button class="btn" id="th" title="Toggle theme">🌙</button></nav></header>
+
+<main>
+<section id="home" class="page">
+<div class="wrap">
+<div class="hero"><div>
+<span class="tag">Runs 100% in your browser · free</span>
+<h1>Cut more.<br><span>Waste less.</span></h1>
+<p>True-shape auto nesting for laser, plasma, waterjet and any 2-axis cutter. Drop in your DXF or SVG parts, set the sheet, and get a tight layout in seconds.</p>
+<a class="btn pri" href="#nest">Start nesting →</a><a class="btn" href="#projects">My projects</a></div>
+<div class="vis"><svg viewBox="0 0 400 260" width="100%"><rect x="2" y="2" width="396" height="256" rx="6" style="fill:var(--cv);stroke:var(--b)" stroke-width="2"/>
+<g fill-opacity=".3" stroke-width="2"><path fill="#ff7a1a" stroke="#ff7a1a" d="M14 14h120v70H14z"/><circle cx="45" cy="49" r="14" style="fill:var(--cv)" fill-opacity="1" stroke="#ff7a1a"/><circle cx="103" cy="49" r="14" style="fill:var(--cv)" fill-opacity="1" stroke="#ff7a1a"/>
+<circle cx="200" cy="64" r="50" fill="#2de2c8" stroke="#2de2c8"/><circle cx="200" cy="64" r="16" style="fill:var(--cv)" fill-opacity="1" stroke="#2de2c8"/>
+<path fill="#7aa2ff" stroke="#7aa2ff" d="M262 14h110v30h-60v100h-50z"/><path fill="#ff7a1a" stroke="#ff7a1a" d="M14 96l110 0-110 120z"/>
+<path fill="#2de2c8" stroke="#2de2c8" d="M138 96h100v36H138z"/><path fill="#7aa2ff" stroke="#7aa2ff" d="M138 146h86l-86 100z"/><circle cx="300" cy="190" r="50" fill="#ff7a1a" stroke="#ff7a1a"/><path fill="#2de2c8" stroke="#2de2c8" d="M236 160l30 80h-30z"/></g></svg></div></div>
+<div class="stats"><div><b>~90%</b>typical material use</div><div><b>DXF · SVG</b>import</div><div><b>DXF · SVG · G-code</b>export</div><div><b>0</b>installs, sign-ups</div></div>
+<h2>Built for the cutting table</h2><p class="sub">Everything you need to go from drawing to machine-ready layout.</p>
+<div class="grid">
+<div class="card"><div class="ic">🧩</div><h3>True-shape nesting</h3><p>Parts are packed by their real outline, not bounding boxes, and smaller parts drop into holes of bigger ones.</p></div>
+<div class="card"><div class="ic">🔄</div><h3>Any-angle rotation</h3><p>Free rotation, edge-aligned angles and a search over many configurations to find the tightest fit.</p></div>
+<div class="card"><div class="ic">📏</div><h3>Kerf &amp; spacing</h3><p>Set part spacing and edge margin for laser, plasma or waterjet kerf.</p></div>
+<div class="card"><div class="ic">📂</div><h3>DXF &amp; SVG import</h3><p>LINE, ARC, CIRCLE, ELLIPSE, SPLINE, LWPOLYLINE and POLYLINE with bulges, auto-joined into closed profiles.</p></div>
+<div class="card"><div class="ic">📑</div><h3>Multi-sheet</h3><p>Overflow parts open new sheets automatically, with utilisation per sheet.</p></div>
+<div class="card"><div class="ic">⚙️</div><h3>Machine-ready output</h3><p>Export DXF, SVG or simple G-code with holes cut before outer profiles.</p></div></div>
+<h2>How it works</h2><p class="sub">Three steps.</p>
+<div class="grid steps"><div class="card"><b>1</b><h3>Upload parts</h3><p>Drag DXF/SVG files in, set quantities.</p></div><div class="card"><b>2</b><h3>Set the sheet</h3><p>Size, spacing, margin, rotation.</p></div><div class="card"><b>3</b><h3>Nest &amp; export</h3><p>Watch it pack live, then download.</p></div></div>
+<div class="cta"><h2>Ready to save some steel?</h2><p class="sub">No account needed. Try it with the built-in sample parts.</p><a class="btn pri" href="#nest">Open the nester</a></div>
+</div></section>
+
+<section id="nest" class="page" hidden>
+<div class="topbar"><div class="stepper"><button class="stp on" id="st1" data-n="1">1 · Parts</button><button class="stp" id="st2" data-n="2">2 · Settings</button><button class="stp" id="st3" data-n="3">3 · Nest</button></div>
+<div class="chips"><div class="chip hi">Nested<b id="tp">0%</b></div><div class="chip">Parts<b id="tpp">0 / 0</b></div><div class="chip">Sheet use<b id="tu">–</b></div><div class="chip">Packing density<b id="td">–</b></div></div></div>
+<div class="wiz">
+<div id="s1"><h2>Upload parts &amp; set quantities</h2><p class="sub">DXF and SVG files, or a whole folder.</p>
+<div class="drop" id="drop">Drop <b>files or a folder</b> here<br><small>DXF · SVG · DWG: export to DXF first</small></div>
+<input type="file" id="file" accept=".dxf,.svg" multiple hidden><input type="file" id="dir" webkitdirectory multiple hidden>
+<div class="acts" style="margin-top:10px;align-items:center"><button class="btn" id="bf">📄 Choose files</button><button class="btn" id="bd">📁 Upload folder</button><button class="btn" id="smp">+ Sample parts</button><button class="btn" id="mall" title="Let every part be flipped to save material">⇋ Mirror all</button><button class="btn" id="clr">Clear all</button><select id="units" style="width:130px;flex:none" title="Units of your files"><option value="0">Auto-detect units</option><option value="1">mm</option><option value="25.4">inch</option></select></div>
+<div class="sum"><span id="cnt"></span> <span id="m1"></span></div><div class="pgrid2" id="plist"></div>
+<div class="nav"><span></span><button class="btn pri" id="n1" data-go="2" disabled>Next: settings →</button></div></div>
+<div id="s2" hidden><h2>Sheet &amp; cutting settings</h2><p class="sub">Spacing covers your kerf / cut width.</p>
+<div class="pan"><div class="f">
+<div><label>Sheet width (mm)</label><input id="sw" type="number" value="1250"></div><div><label>Sheet height (mm)</label><input id="sh" type="number" value="625"></div>
+<div><label>Spacing between parts (mm)</label><input id="gap" type="number" value="3" step=".5"></div><div><label>Border / edge margin (mm)</label><input id="mar" type="number" value="5"></div>
+<div><label>Rotation</label><select id="rot"><option value="360">None (fixed)</option><option value="90">90° steps</option><option value="45">45° steps</option><option value="15">15° steps</option><option value="any" selected>Any direction (free rotation)</option></select></div>
+<div><label>Precision</label><select id="res"><option value="250">Fast</option><option value="400" selected>Balanced</option><option value="700">Fine (slow)</option></select></div></div></div>
+<div class="nav"><button class="btn" data-go="1">← Back</button><button class="btn pri" data-go="3">Next: nest →</button></div></div>
+<div id="s3" hidden><h2>Start nesting</h2><div class="sum" id="sum"></div>
+<div class="pan"><div class="acts" style="align-items:end"><div style="flex:2;min-width:220px"><label style="font-size:12px;color:var(--m)">Search effort</label><select id="srch"><option value="auto">Auto – until it stops improving</option><option value="10">10 seconds</option><option value="30">30 seconds</option><option value="60">1 minute</option><option value="0">Until I press Stop</option></select></div><button class="btn pri" id="go">▶ Start nesting</button><button class="btn" id="stop" hidden>■ Stop</button></div><div id="msg"></div></div>
+<div class="pan"><div class="tabs" id="tabs"></div><canvas id="cv" width="800" height="400"></canvas><div class="kpi" id="kpi"></div>
+<div class="acts" style="margin-top:12px"><button class="btn" data-x="dxf">⬇ DXF</button><button class="btn" data-x="svg">⬇ SVG</button><button class="btn" data-x="nc">⬇ G-code</button><input id="feed" type="number" value="2000" title="G-code feed (mm/min)" style="width:100px;flex:none"><input id="pname" placeholder="Project name" style="flex:1.4"><button class="btn pri" id="save">Save project</button></div></div>
+<div class="nav"><button class="btn" data-go="2">← Back</button><span></span></div></div>
+</div></section>
+
+<section id="projects" class="page" hidden><div class="pj"><div class="top"><div><h2>Projects</h2><p class="sub" style="margin:0">Saved in this browser.</p></div><a class="btn pri" href="#nest" id="newp">+ New project</a></div><div class="grid" id="pgrid"></div></div></section>
+</main>
+<footer>NestForge · nest in your browser · always check layouts and G-code before cutting</footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],tick=()=>new Promise(r=>setTimeout(r));
+function route(){let h=(location.hash||'#home').slice(1);if(!$('#'+h))h='home';$$('.page').forEach(p=>p.hidden=p.id!=h);$$('nav a').forEach(a=>a.classList.toggle('on',a.hash=='#'+h));if(h=='projects')renderProjects();if(h=='nest')draw();scrollTo(0,0)}
+addEventListener('hashchange',route);
+let uf=1,parts=[],pid=0,sheets=[],cur=0,cfg={},busy=0,stopF=0;
+const D=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+const ar=c=>{let s=0;for(let i=0;i<c.length;i++){const a=c[i],b=c[(i+1)%c.length];s+=a[0]*b[1]-b[0]*a[1]}return Math.abs(s/2)};
+const arc=(cx,cy,r,a0,a1)=>{while(a1<=a0)a1+=360;const n=Math.max(6,Math.ceil((a1-a0)/5)),o=[];for(let i=0;i<=n;i++){const t=(a0+(a1-a0)*i/n)*Math.PI/180;o.push([cx+r*Math.cos(t),cy+r*Math.sin(t)])}return o};
+const circ=(x,y,r)=>arc(x,y,r,0,360).slice(0,-1);
+function msg(t){$('#msg').textContent=t}
+/* ---------- DXF ---------- */
+function bulgePts(v,cl){const o=[],n=v.length;for(let i=0;i<n;i++){const a=v[i],b=v[(i+1)%n];o.push([a.x,a.y]);if(a.b&&(cl||i<n-1)){const th=4*Math.atan(a.b),dx=b.x-a.x,dy=b.y-a.y,c=Math.hypot(dx,dy),r=Math.abs(c/(2*Math.sin(th/2))),al=Math.atan2(dy,dx),sg=Math.sign(th),ca=al+sg*(Math.PI-Math.abs(th))/2,cx=a.x+r*Math.cos(ca),cy=a.y+r*Math.sin(ca),b0=Math.atan2(a.y-cy,a.x-cx),m=Math.max(3,Math.ceil(Math.abs(th)*180/Math.PI/5));for(let k=1;k<m;k++){const p=b0+th*k/m;o.push([cx+r*Math.cos(p),cy+r*Math.sin(p)])}}}return o}
+function chain(segs,tol){const out=[];let s=segs.slice();while(s.length){let c=s.pop(),go=1;while(go){go=0;for(let i=0;i<s.length;i++){const q=s[i],a=c[0],b=c[c.length-1],qa=q[0],qb=q[q.length-1];
+if(D(b,qa)<tol)c=c.concat(q.slice(1));else if(D(b,qb)<tol)c=c.concat(q.slice(0,-1).reverse());else if(D(a,qb)<tol)c=q.concat(c.slice(1));else if(D(a,qa)<tol)c=q.slice().reverse().concat(c.slice(1));else continue;s.splice(i,1);go=1;break}}
+if(c.length>3&&D(c[0],c[c.length-1])<tol){c.pop();out.push(c)}}return out}
+function parseDXF(txt,sc){const L=txt.split(/\r?\n/),P=[];for(let i=0;i+1<L.length;i+=2)P.push([+L[i],L[i+1].trim()]);
+if(!sc){const iu=P.findIndex(p=>p[0]==9&&p[1]=='$INSUNITS'),U={1:25.4,2:304.8,3:1609344,4:1,5:10,6:1000,7:1e6,8:2.54e-5,9:.0254,10:914.4,13:.001,14:100,15:1e4};sc=iu>=0?U[+P[iu+1][1]]||1:1}uf=sc;
+let i=P.findIndex(p=>p[0]==2&&p[1]=='ENTITIES');if(i<0)i=0;const E=[];let e=null;
+for(;i<P.length;i++){const[c,v]=P[i];if(c==0){if(v=='ENDSEC')break;e={t:v,d:[]};E.push(e)}else if(e)e.d.push([c,v])}
+const open=[],closed=[];let pl=null;
+E.forEach(e=>{const f=(c,df=0)=>{const x=e.d.find(p=>p[0]==c);return x?parseFloat(x[1]):df},g=c=>f(c),t=e.t;
+if(t=='LINE')open.push([[g(10),g(20)],[g(11),g(21)]]);
+else if(t=='CIRCLE')closed.push(circ(g(10),g(20),g(40)));
+else if(t=='ARC')open.push(arc(g(10),g(20),g(40),g(50),g(51)));
+else if(t=='ELLIPSE'){const cx=g(10),cy=g(20),mx=g(11),my=g(21),r=f(40,1),a=f(41,0);let b=f(42,2*Math.PI);while(b<=a)b+=2*Math.PI;const n=Math.max(16,Math.ceil((b-a)*12)),o=[];for(let k=0;k<=n;k++){const u=a+(b-a)*k/n;o.push([cx+Math.cos(u)*mx-Math.sin(u)*r*my,cy+Math.cos(u)*my+Math.sin(u)*r*mx])}open.push(o)}
+else if(t=='SPLINE'){const pts=(cx,cy)=>{const xs=e.d.filter(p=>p[0]==cx).map(p=>+p[1]),ys=e.d.filter(p=>p[0]==cy).map(p=>+p[1]);return xs.map((x,k)=>[x,ys[k]])};let p=pts(11,21);if(p.length<2)p=pts(10,20);if(f(70)&1)p.push(p[0]);open.push(p)}
+else if(t=='LWPOLYLINE'){const v=[];e.d.forEach(([c,s])=>{if(c==10)v.push({x:+s,y:0,b:0});else if(c==20&&v.length)v[v.length-1].y=+s;else if(c==42&&v.length)v[v.length-1].b=+s});const cl=f(70)&1;(cl?closed:open).push(bulgePts(v,cl))}
+else if(t=='POLYLINE')pl={v:[],cl:f(70)&1};
+else if(t=='VERTEX'&&pl)pl.v.push({x:g(10),y:g(20),b:g(42)});
+else if(t=='SEQEND'&&pl){(pl.cl?closed:open).push(bulgePts(pl.v,pl.cl));pl=null}});
+let ext=1;open.concat(closed).forEach(c=>c.forEach(p=>ext=Math.max(ext,Math.abs(p[0]),Math.abs(p[1]))));
+return closed.concat(chain(open,Math.max(.01,ext*5e-4))).map(c=>c.map(p=>[p[0]*sc,-p[1]*sc]))}
+/* ---------- SVG ---------- */
+function parseSVG(txt,sc){const dv=document.createElement('div');dv.style.cssText='position:absolute;visibility:hidden;width:0;height:0';dv.innerHTML=txt;document.body.append(dv);const sv=dv.querySelector('svg'),out=[];if(!sv){dv.remove();return out}
+if(!sc){const U={mm:1,cm:10,in:25.4,pt:25.4/72,pc:25.4/6,px:25.4/96,'':25.4/96},m=v=>{const r=/^([\d.]+)\s*([a-z%]*)$/i.exec((v||'').trim());return r&&r[2]!='%'&&U[r[2].toLowerCase()]?[+r[1],U[r[2].toLowerCase()]]:null},w=m(sv.getAttribute('width')),vb=(sv.getAttribute('viewBox')||'').trim().split(/[\s,]+/).map(Number);
+sc=w?(vb.length==4&&vb[2]>0?w[0]*w[1]/vb[2]:w[1]):(vb.length==4?1:25.4/96)}uf=sc;
+sv.querySelectorAll('path,rect,circle,ellipse,polygon,polyline').forEach(el=>{const subs=el.tagName=='path'?el.getAttribute('d').split(/(?=[Mm])/).filter(s=>s.trim()):[null];
+subs.forEach(s=>{let p=el;if(s){p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',s);sv.append(p)}
+try{const n=p.getTotalLength(),k=Math.min(500,Math.max(12,Math.ceil(n/1.5))),c=[];for(let i=0;i<k;i++){const q=p.getPointAtLength(n*i/k);c.push([q.x*sc,q.y*sc])}if(c.length>2)out.push(c)}catch(e){}})});dv.remove();return out}
+/* ---------- parts ---------- */
+function addPart(name,cs){name=name.replace(/[<>&"]/g,'');cs=cs.filter(c=>c.length>2&&ar(c)>1e-6);if(!cs.length){msg1(name+': no closed shapes found (open lines are ignored)');return}
+let mx=1e9,my=1e9,Mx=-1e9,My=-1e9;cs.forEach(c=>c.forEach(p=>{mx=Math.min(mx,p[0]);my=Math.min(my,p[1]);Mx=Math.max(Mx,p[0]);My=Math.max(My,p[1])}));
+cs=cs.map(c=>c.map(p=>[p[0]-mx,p[1]-my]));const a=cs.map(ar).sort((x,y)=>y-x);pid++;
+parts.push({id:pid,mir:0,name,qty:1,c:cs,w:Mx-mx,h:My-my,area:Math.max(1,a[0]-a.slice(1).reduce((s,v)=>s+v,0)),h_:(pid*47)%360});renderParts()}
+const msg1=t=>$('#m1').textContent=t,total=()=>parts.reduce((a,p)=>a+p.qty,0);
+function pv(p,cv){const x=cv.getContext('2d'),W=cv.width,H=cv.height,k=Math.min((W-16)/p.w,(H-16)/p.h);x.translate((W-p.w*k)/2,(H-p.h*k)/2);x.scale(k,k);x.beginPath();p.c.forEach(c=>{c.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath()});x.fillStyle=`hsl(${p.h_} 70% 55% / .4)`;x.fill('evenodd');x.strokeStyle=`hsl(${p.h_} 75% 42%)`;x.lineWidth=1.6/k;x.stroke()}
+function renderParts(){const L=$('#plist');L.innerHTML=parts.length?parts.map(p=>`<div class="pcard" data-id="${p.id}"><canvas width="240" height="130"></canvas><div class="nm" title="${p.name}">${p.name}</div><small>${p.w.toFixed(0)} × ${p.h.toFixed(0)} mm · ${p.c.length-1} hole(s)</small><div class="qr"><label>Width</label><input class="wd" type="number" step="any" min="0.1" value="${+p.w.toFixed(2)}" title="Real width in mm – edit to rescale"><small>mm</small></div><label class="mr"><input type="checkbox" class="mi" ${p.mir?'checked':''}> Allow mirroring</label><div class="qr"><label>Qty</label><input type="number" min="1" value="${p.qty}"><button class="x" title="Remove">×</button></div></div>`).join(''):'<div class="empty" style="grid-column:1/-1">No parts yet – drop files or a folder above, or try the sample parts.</div>';
+L.querySelectorAll('.pcard').forEach(d=>pv(parts.find(p=>p.id==d.dataset.id),d.querySelector('canvas')));tot()}
+function tot(){$('#cnt').textContent=total()+' part(s) · '+parts.length+' type(s)';$('#n1').disabled=!parts.length;if(!busy&&!sheets.length)setTop(0,total(),null,null)}
+$('#plist').addEventListener('input',e=>{if(e.target.classList.contains('wd')||e.target.classList.contains('mi'))return;const p=parts.find(p=>p.id==e.target.closest('.pcard').dataset.id);p.qty=Math.max(1,+e.target.value||1);tot()});
+$('#plist').addEventListener('change',e=>{if(e.target.classList.contains('mi')){parts.find(p=>p.id==e.target.closest('.pcard').dataset.id).mir=e.target.checked?1:0;sheets=[];cfg={};stats(null);return}if(!e.target.classList.contains('wd'))return;const p=parts.find(p=>p.id==e.target.closest('.pcard').dataset.id),nw=+e.target.value;if(!(nw>0))return renderParts();const f=nw/p.w;p.c=p.c.map(c=>c.map(([a,b])=>[a*f,b*f]));p.w*=f;p.h*=f;p.area*=f*f;sheets=[];cfg={};stats(null);renderParts()});
+$('#plist').addEventListener('click',e=>{if(e.target.classList.contains('x')){parts=parts.filter(p=>p.id!=e.target.closest('.pcard').dataset.id);renderParts()}});
+async function load(files){const sc=+$('#units').value,small=[];let n=0,scaled=0;for(const f of files){const x=f.name.toLowerCase();if(x.endsWith('.dwg')){msg1('DWG isn’t supported – export as DXF.');continue}if(!/\.(dxf|svg)$/.test(x))continue;
+try{const t=await f.text(),c0=parts.length;addPart(f.name.replace(/\.\w+$/,''),x.endsWith('.svg')?parseSVG(t,sc):parseDXF(t,sc));if(parts.length>c0){n++;const q=parts[parts.length-1];if(Math.max(q.w,q.h)<15)small.push(q.name);if(!sc&&uf!=1)scaled=1}}catch(err){msg1(f.name+': could not read file')}}
+if(n)msg1(`Added ${n} part(s).`+(scaled?' Units auto-detected from the file.':'')+(small.length?` ⚠ ${small.slice(0,3).join(', ')} look very small – check the Units setting or type the real width on the part card.`:''));else if(!$('#m1').textContent)msg1('No DXF/SVG parts found.')}
+async function walk(en,out){if(en.isFile)out.push(await new Promise(r=>en.file(r)));else{const rd=en.createReader();let b;do{b=await new Promise(r=>rd.readEntries(r,()=>r([])));for(const c of b)await walk(c,out)}while(b.length)}}
+const drop=$('#drop');drop.onclick=()=>$('#file').click();$('#bf').onclick=()=>$('#file').click();$('#bd').onclick=()=>$('#dir').click();
+$('#file').onchange=$('#dir').onchange=e=>{msg1('');load([...e.target.files]);e.target.value=''};
+['dragover','dragenter'].forEach(v=>drop.addEventListener(v,e=>{e.preventDefault();drop.classList.add('on')}));['dragleave','drop'].forEach(v=>drop.addEventListener(v,e=>{e.preventDefault();drop.classList.remove('on')}));
+drop.addEventListener('drop',async e=>{msg1('');const its=[...(e.dataTransfer.items||[])].map(i=>i.webkitGetAsEntry&&i.webkitGetAsEntry()).filter(Boolean),fl=[...e.dataTransfer.files];
+if(its.length){const out=[];for(const en of its)await walk(en,out);load(out)}else load(fl)});
+$('#mall').onclick=()=>{const v=!parts.every(p=>p.mir);parts.forEach(p=>p.mir=v?1:0);sheets=[];cfg={};stats(null);renderParts()};
+$('#clr').onclick=()=>{parts=[];sheets=[];cfg={};msg1('');renderParts();draw();stats(null)};
+$('#smp').onclick=()=>{const R=(w,h)=>[[0,0],[w,0],[w,h],[0,h]];
+addPart('Plate',[R(120,80),circ(30,40,12),circ(90,40,12)]);addPart('Flange',[circ(50,50,50),circ(50,50,16),...[0,1,2,3].map(i=>circ(50+34*Math.cos(i*Math.PI/2),50+34*Math.sin(i*Math.PI/2),6))]);
+addPart('L-bracket',[[[0,0],[100,0],[100,30],[30,30],[30,110],[0,110]],circ(15,95,6),circ(80,15,6)]);addPart('Gusset',[[[0,0],[90,0],[0,90]]]);addPart('Slotted bar',[R(220,36),circ(30,18,8),circ(110,18,8),circ(190,18,8)]);
+parts.slice(-5).forEach((p,i)=>p.qty=[6,4,6,8,5][i]);renderParts()};
+/* ---------- wizard ---------- */
+function go(n){if(n>1&&!parts.length)return;[1,2,3].forEach(i=>{$('#s'+i).hidden=i!=n;$('#st'+i).classList.toggle('on',i==n);$('#st'+i).classList.toggle('done',i<n)});
+if(n==3){const v=i=>$('#'+i).value,r=$('#rot');if(!cfg.W){cfg.W=+v('sw');cfg.H=+v('sh')}$('#sum').textContent=`${total()} part(s) · sheet ${v('sw')} × ${v('sh')} mm · spacing ${v('gap')} mm · border ${v('mar')} mm · rotation: ${r.options[r.selectedIndex].text}`;draw()}scrollTo(0,0)}
+$$('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));$$('.stp').forEach(b=>b.onclick=()=>go(+b.dataset.n));
+$('#s2').addEventListener('input',()=>{if(!busy){sheets=[];cfg={};stats(null)}});
+function setTop(pl,tt,u,d){$('#tp').textContent=(tt?Math.round(100*pl/tt):0)+'%';$('#tpp').textContent=pl+' / '+tt;$('#tu').textContent=u==null?'–':(u*100).toFixed(1)+'%';$('#td').textContent=d==null?'–':(d*100).toFixed(1)+'%'}
+function theme(t){document.documentElement.dataset.theme=t;$('#th').textContent=t=='dark'?'☀️':'🌙';try{localStorage.setItem('nf_theme',t)}catch(e){}draw()}
+$('#th').onclick=()=>theme(document.documentElement.dataset.theme=='dark'?'light':'dark');
+/* ---------- nesting ---------- */
+function mask(p,ang,cell,gap,fl){const r=ang*Math.PI/180,co=Math.cos(r),si=Math.sin(r);let cs=p.c.map(c=>c.map(([x,y])=>{if(fl)x=-x;return[x*co-y*si,x*si+y*co]})),mx=1e9,my=1e9,Mx=-1e9,My=-1e9;
+cs.forEach(c=>c.forEach(([x,y])=>{mx=Math.min(mx,x);my=Math.min(my,y);Mx=Math.max(Mx,x);My=Math.max(My,y)}));cs=cs.map(c=>c.map(([x,y])=>[x-mx,y-my]));
+const lw=gap+cell*.6,pad=Math.ceil(lw/2/cell)+1,w=Math.ceil((Mx-mx)/cell)+2*pad+1,h=Math.ceil((My-my)/cell)+2*pad+1,cv=document.createElement('canvas');cv.width=w;cv.height=h;
+const x=cv.getContext('2d',{willReadFrequently:true});x.translate(pad,pad);x.scale(1/cell,1/cell);x.beginPath();cs.forEach(c=>{c.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath()});x.fill('evenodd');x.lineWidth=lw;x.lineJoin='round';x.stroke();
+const d=x.getImageData(0,0,w,h).data,runs=[];for(let j=0;j<h;j++){let s=-1;for(let i=0;i<=w;i++){const on=i<w&&d[(j*w+i)*4+3]>8;if(on&&s<0)s=i;if(!on&&s>=0){runs.push([j,s,i]);s=-1}}}return{cs,w,h,pad,runs,bw:Mx-mx,bh:My-my}}
+function find(g,GW,GH,m,lim,dir){const R=m.runs,xm=GW-m.w,ym=GH-m.h,fit=(x,y)=>{for(let i=0;i<R.length;i++){const r=R[i],b=(y+r[0])*GW+x;for(let k=b+r[1];k<b+r[2];k++)if(g[k])return 0}return 1};
+if(!dir){for(let y=0,e=Math.min(ym,lim);y<=e;y++)for(let x=0;x<=xm;x++)if(fit(x,y))return{x,y}}else for(let x=0,e=Math.min(xm,lim);x<=e;x++)for(let y=0;y<=ym;y++)if(fit(x,y))return{x,y};return null}
+function angleList(p,rnd){const s=[],add=(t,tol)=>{t=(t%360+360)%360;if(!s.some(u=>Math.abs(((t-u+540)%360)-180)<=tol))s.push(+t.toFixed(2))};[0,90,180,270].forEach(t=>add(t,.5));
+const c=p.c.reduce((m,x)=>ar(x)>ar(m)?x:m),E=[];for(let i=0;i<c.length;i++){const a=c[i],b=c[(i+1)%c.length];E.push([D(a,b),Math.atan2(b[1]-a[1],b[0]-a[0])*180/Math.PI])}
+E.sort((x,y)=>y[0]-x[0]);let n=0;for(const[l,g]of E){if(n>=4)break;const t=-g,b=s.length;[0,90,180,270].forEach(o=>add(t+o,3));if(s.length>b)n++}
+for(let i=0;i<(rnd?8:4);i++)add(Math.random()*360,0);return s}
+async function nest(){if(busy)return;if(!parts.length){msg('Add parts first.');return}
+busy=1;stopF=0;$('#go').hidden=true;$('#stop').hidden=false;
+cfg={W:+$('#sw').value,H:+$('#sh').value,gap:Math.max(0,+$('#gap').value),mar:Math.max(0,+$('#mar').value)};
+const cell=Math.max(cfg.W,cfg.H)/(+$('#res').value),GW=Math.ceil(cfg.W/cell),GH=Math.ceil(cfg.H/cell),mode=$('#rot').value,lim=$('#srch').value,t0=performance.now(),cache=new Map,mg=Math.ceil(cfg.mar/cell);
+const fixed=mode=='any'?null:(()=>{const a=[];for(let t=0;t<360;t+=+mode)a.push(t);return a})();
+const inst=[];parts.forEach(p=>{for(let i=0;i<p.qty;i++)inst.push(p)});const totA=inst.reduce((a,p)=>a+p.area,0);cfg.cell=cell;cfg.total=inst.length;
+let ly=performance.now(),best=null,k=0,stale=0;const yld=async()=>{if(performance.now()-ly>40){await tick();ly=performance.now()}};
+const once=async o=>{const S=[],AL=new Map;let cnt=0;
+const ns=()=>{const g=new Uint8Array(GW*GH);for(let y=0;y<GH;y++)for(let x=0;x<GW;x++)if(x<mg||y<mg||x>=GW-mg||y>=GH-mg)g[y*GW+x]=1;S.push({g,pl:[]})};
+for(const p of o.ord){let al=fixed;if(!al){al=AL.get(p.id);if(!al)AL.set(p.id,al=angleList(p,o.k))}if(cache.size>700)cache.clear();
+const L2=al.map(t=>[t,0]);if(p.mir)al.forEach(t=>L2.push([(360-t)%360,1]));const ms=L2.map(([t,fl])=>{const key=p.id+'_'+t+'_'+fl;let m=cache.get(key);if(!m)cache.set(key,m=mask(p,t,cell,cfg.gap,fl));return m}).filter(m=>m.w<=GW&&m.h<=GH);let ok=0;
+if(ms.length)for(let si=0;!ok;si++){if(si==S.length){if(si&&!S[si-1].pl.length)break;if(S.length>=o.cap)return null;ns()}
+const sh=S[si];let b=null;for(const m of ms){const pos=find(sh.g,GW,GH,m,b?b.s-(o.dir?m.w:m.h):1e9,o.dir);if(pos){const s=o.dir?pos.x+m.w+pos.y*o.wx:pos.y+m.h+pos.x*o.wx;if(!b||s<b.s)b={m,pos,s}}}
+if(b){const{m,pos}=b;m.runs.forEach(r=>sh.g.fill(1,(pos.y+r[0])*GW+pos.x+r[1],(pos.y+r[0])*GW+pos.x+r[2]));sh.pl.push({p,m,x:(pos.x+m.pad)*cell,y:(pos.y+m.pad)*cell});ok=1;cnt++}}
+if(ok&&!best&&cnt%3==0){sheets=S;cur=S.length-1;draw();setTop(cnt,inst.length,null,null)}
+await yld();if(stopF){if(best)return null;break}}
+const F=S.filter(s=>s.pl.length);let c=0;F.forEach((s,i)=>{if(i<F.length-1)c+=cfg.W*cfg.H;else{let mx=0,my=0;s.pl.forEach(q=>{mx=Math.max(mx,q.x+q.m.bw);my=Math.max(my,q.y+q.m.bh)});c+=o.dir?cfg.H*mx:cfg.W*my}});
+const miss=o.ord.length-cnt;return{S:F,cc:c,c:c+miss*1e15,miss,dir:o.dir}};
+const keys=[p=>p.area,p=>Math.max(p.w,p.h),p=>p.w*p.h,p=>p.h,p=>p.w];
+while(!stopF){const dir=k%2,wx=[.1,.5,0][(k>>1)%3],kf=keys[k]||keys[Math.random()*5|0];
+const ord=k<5?inst.slice().sort((a,b)=>kf(b)-kf(a)):inst.map(p=>[kf(p)*(.4+Math.random()*1.2),p]).sort((a,b)=>b[0]-a[0]).map(a=>a[1]);
+const r=await once({ord,dir,wx,k,cap:best?best.S.length:1e9});k++;
+if(r&&(!best||r.c<best.c*.9999)){best=r;best.k=k;stale=0;sheets=r.S;cur=0;stats(best,k);draw()}else stale++;
+const el=(performance.now()-t0)/1000;msg(`Tried ${k} configuration${k>1?'s':''} · best found on #${best?best.k:'–'} · ${el.toFixed(0)}s`);
+if(!best||!best.S.length||(best.miss==0&&best.cc<=totA*1.001))break;
+if(lim=='auto'?(stale>=30&&k>=12)||el>120:(+lim&&el>=+lim))break;await tick()}
+busy=0;$('#go').hidden=false;$('#stop').hidden=true;sheets=best?best.S:[];cur=0;cfg.time=(performance.now()-t0)/1000;stats(best,k);draw();
+msg(!best?'Nothing fit the sheet.':`Finished: ${k} configurations in ${cfg.time.toFixed(1)}s · best from #${best.k}.`+(best.miss?` ${best.miss} part(s) did not fit – enlarge the sheet or reduce spacing.`:' Nesting is NP-hard, so this is the best layout found, not a proven optimum.'))}
+$('#go').onclick=nest;$('#stop').onclick=()=>{stopF=1};
+/* ---------- view ---------- */
+const pc=q=>q.m.cs.map(c=>c.map(([a,b])=>[a+q.x,b+q.y]));
+function draw(){if(!cfg.W)return;const cv=$('#cv'),par=cv.parentElement.clientWidth-34;if(par<50)return;const k=par/cfg.W,dpr=devicePixelRatio||1,cs=getComputedStyle(document.documentElement),dk=document.documentElement.dataset.theme=='dark';
+cv.width=par*dpr;cv.height=cfg.H*k*dpr;cv.style.width=par+'px';cv.style.height=cfg.H*k+'px';const x=cv.getContext('2d');x.setTransform(dpr*k,0,0,dpr*k,0,0);
+x.fillStyle=cs.getPropertyValue('--cv');x.fillRect(0,0,cfg.W,cfg.H);x.strokeStyle=cs.getPropertyValue('--m');x.lineWidth=1.5/k;x.strokeRect(0,0,cfg.W,cfg.H);const sh=sheets[cur];
+if(sh)sh.pl.forEach(q=>{const h=q.p.h_;x.beginPath();pc(q).forEach(c=>{c.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath()});x.fillStyle=`hsl(${h} 70% 55% / ${dk?.35:.45})`;x.fill('evenodd');x.strokeStyle=`hsl(${h} 85% ${dk?65:40}%)`;x.lineWidth=1.3/k;x.stroke()});
+$('#tabs').innerHTML=sheets.map((s,i)=>`<button class="${i==cur?'on':''}" data-i="${i}">Sheet ${i+1} · ${(100*sUtil(s)).toFixed(0)}%</button>`).join('')}
+const sUtil=s=>s.pl.reduce((a,q)=>a+q.p.area,0)/(cfg.W*cfg.H);
+$('#tabs').onclick=e=>{if(e.target.dataset.i){cur=+e.target.dataset.i;draw()}};
+addEventListener('resize',()=>{if(location.hash=='#nest')draw()});
+function stats(b){if(!b||!sheets.length){$('#kpi').innerHTML='';setTop(0,cfg.total||total(),null,null);return}let pl=0,len=0,pz=0,pa=0;sheets.forEach(s=>s.pl.forEach(q=>{pl++;pa+=q.p.area;q.m.cs.forEach(c=>{pz++;for(let i=0;i<c.length;i++)len+=D(c[i],c[(i+1)%c.length])})}));
+const u=pa/(sheets.length*cfg.W*cfg.H);cfg.util=u;setTop(pl,cfg.total,u,pa/b.cc);
+$('#kpi').innerHTML=`<div>Sheets<b>${sheets.length}</b></div><div>Cut length<b>${(len/1000).toFixed(2)} m</b></div><div>Pierces<b>${pz}</b></div><div>Configs tried<b>${arguments[1]||'–'}</b></div><div>Best found on<b>#${b.k||'–'}</b></div>`}
+/* ---------- export ---------- */
+function polys(s){const o=[];s.pl.forEach(q=>o.push(...pc(q)));return o.sort((a,b)=>ar(a)-ar(b))}
+function dl(name,txt,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),999)}
+function expo(kind){const s=sheets[cur];if(!s){msg('Run nesting first.');return}const H=cfg.H,W=cfg.W,P=polys(s),nm=($('#pname').value||'nest').replace(/\W+/g,'_')+'_sheet'+(cur+1);
+if(kind=='dxf'){let o='0\nSECTION\n2\nENTITIES\n';const lw=(c,l)=>{o+=`0\nLWPOLYLINE\n8\n${l}\n90\n${c.length}\n70\n1\n`+c.map(p=>`10\n${p[0].toFixed(3)}\n20\n${(H-p[1]).toFixed(3)}\n`).join('')};lw([[0,0],[W,0],[W,H],[0,H]],'SHEET');P.forEach(c=>lw(c,'CUT'));dl(nm+'.dxf',o+'0\nENDSEC\n0\nEOF\n','application/dxf')}
+if(kind=='svg')dl(nm+'.svg',`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}mm" height="${H}mm"><rect width="${W}" height="${H}" fill="none" stroke="#999"/>${P.map(c=>`<path fill="none" stroke="red" stroke-width=".3" d="M${c.map(p=>p[0].toFixed(2)+' '+p[1].toFixed(2)).join('L')}Z"/>`).join('')}</svg>`,'image/svg+xml');
+if(kind=='nc'){const F=+$('#feed').value||2000,f=p=>`X${p[0].toFixed(3)} Y${(H-p[1]).toFixed(3)}`;let o='(NestForge – check before cutting)\nG21 G90\n';P.forEach(c=>{o+=`G0 ${f(c[0])}\nM3\n`;c.slice(1).concat([c[0]]).forEach(p=>o+=`G1 ${f(p)} F${F}\n`);o+='M5\n'});dl(nm+'.nc',o+'G0 X0 Y0\nM30\n','text/plain')}}
+$$('[data-x]').forEach(b=>b.onclick=()=>expo(b.dataset.x));
+/* ---------- projects ---------- */
+const LS='nestforge_projects',getP=()=>{try{return JSON.parse(localStorage.getItem(LS))||[]}catch(e){return[]}},setP=v=>{try{localStorage.setItem(LS,JSON.stringify(v));return 1}catch(e){return 0}};
+$('#save').onclick=()=>{if(!sheets.length){msg('Run nesting before saving.');return}const t=document.createElement('canvas'),c=$('#cv');t.width=360;t.height=360*c.height/c.width;t.getContext('2d').drawImage(c,0,0,t.width,t.height);
+const r=v=>v.map(c=>c.map(p=>[+p[0].toFixed(2),+p[1].toFixed(2)])),pr={id:Date.now(),name:$('#pname').value||'Untitled nest',date:new Date().toLocaleString(),util:cfg.util,sheets:sheets.length,thumb:t.toDataURL('image/jpeg',.7),parts:parts.map(p=>({name:p.name,qty:p.qty,mir:p.mir,c:r(p.c)})),set:['sw','sh','gap','mar','rot','res','units','feed'].map(i=>[i,$('#'+i).value])};
+msg(setP([pr,...getP()])?'Project saved – see the Projects page.':'Could not save (browser storage full or blocked).')};
+function renderProjects(){const L=getP();$('#pgrid').innerHTML=L.length?L.map(p=>`<div class="card pc" data-id="${p.id}"><img src="${p.thumb}" alt=""><h3>${p.name.replace(/</g,'&lt;')}</h3><p>${p.sheets} sheet(s) · ${(p.util*100).toFixed(1)}% used · ${p.parts.length} part type(s)<br>${p.date}</p><div class="acts"><button class="btn" data-o>Open</button><button class="btn" data-d>Delete</button></div></div>`).join(''):'<div class="empty" style="grid-column:1/-1">No saved projects yet. Nest something and press “Save project”.</div>'}
+$('#pgrid').onclick=e=>{const id=e.target.closest('.card')?.dataset.id;if(!id)return;const L=getP();
+if(e.target.dataset.d!==undefined){setP(L.filter(p=>p.id!=id));renderProjects()}
+if(e.target.dataset.o!==undefined){const p=L.find(p=>p.id==id);p.set.forEach(([i,v])=>$('#'+i).value=v);parts=[];p.parts.forEach(q=>{addPart(q.name,q.c);parts[parts.length-1].qty=q.qty;parts[parts.length-1].mir=q.mir?1:0});renderParts();$('#pname').value=p.name;location.hash='#nest';go(3);setTimeout(nest,50)}};
+$('#newp').onclick=()=>{parts=[];sheets=[];cfg={};$('#pname').value='';renderParts();stats(null);go(1)};
+{let t='light';try{t=localStorage.getItem('nf_theme')||'light'}catch(e){}theme(t)}renderParts();route();
+</script></body></html>
